@@ -1,0 +1,17 @@
+# robots.txt for Ananya Deshpande Portfolio
+# Update the domain below after deployment
+
+User-agent: *
+Allow: /
+
+# Block common bot paths
+Disallow: /node_modules/
+Disallow: /dist/
+Disallow: /.git/
+Disallow: /src/
+
+# Allow search engines to crawl the site
+Sitemap: https://yourdomain.com/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
