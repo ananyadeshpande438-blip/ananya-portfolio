@@ -81,7 +81,7 @@ export default function Hero() {
         className="w-full max-w-4xl mx-auto flex flex-col items-center z-10"
       >
         {/* Open to work badge */}
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FEF8EC]/50 border border-[#FFEDD5] text-[#F97316] text-sm font-medium mb-8">
+        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#FAF7F0]/50 border border-[#FED7AA] text-[#F97316] text-sm font-medium mb-8">
           <span className="relative flex h-2.5 w-2.5">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
@@ -94,7 +94,7 @@ export default function Hero() {
         </h3>
 
         <h1 className="text-5xl md:text-7xl lg:text-8xl font-black tracking-tight mb-4">
-          <span className="text-slate-900">{firstName}</span>{' '}
+          <span className="text-[#171717]">{firstName}</span>{' '}
           <span className="text-gradient-purple">{lastName}</span>
         </h1>
 
@@ -129,11 +129,11 @@ export default function Hero() {
             View My Work <ArrowRight size={18} />
           </a>
           
-          <a href="/resume.pdf" download="Ananya_Deshpande_Resume.pdf" className="w-full sm:w-auto px-8 py-3.5 rounded-full border-2 border-slate-200 text-slate-700 hover:border-[#F97316] hover:text-[#F97316] transition-colors flex items-center justify-center gap-2 font-medium bg-[#FEF8EC]/50">
+          <a href="/resume.pdf" download="Ananya_Deshpande_Resume.pdf" className="w-full sm:w-auto px-8 py-3.5 rounded-full border-2 border-[#E8E4DC] text-slate-700 hover:border-[#F97316] hover:text-[#F97316] transition-colors flex items-center justify-center gap-2 font-medium bg-[#FAF7F0]/50">
             <Download size={18} /> Download CV
           </a>
           
-          <a href="#contact" className="w-full sm:w-auto px-8 py-3.5 rounded-full border-2 border-slate-200 text-slate-700 hover:border-[#F97316] hover:text-[#F97316] transition-colors flex items-center justify-center gap-2 font-medium bg-[#FEF8EC]/50">
+          <a href="#contact" className="w-full sm:w-auto px-8 py-3.5 rounded-full border-2 border-[#E8E4DC] text-slate-700 hover:border-[#F97316] hover:text-[#F97316] transition-colors flex items-center justify-center gap-2 font-medium bg-[#FAF7F0]/50">
             <Mail size={18} /> Contact Me
           </a>
         </div>

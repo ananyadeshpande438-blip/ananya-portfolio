@@ -1,13 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, ChevronDown, User, Mail, LogOut } from 'lucide-react';
+import { Menu, X, ChevronDown, User, Mail, LogOut, LogIn } from 'lucide-react';
 import { FiLinkedin } from 'react-icons/fi';
 import { cn } from '../utils/cn';
 import { portfolioData } from '../data/portfolioData';
+import { useAuth } from '../context/AuthContext.jsx';
 
 const navLinks = [
   { name: 'Skills', href: '#skills' },
-  { name: 'Tools', href: '#tools' },
   { name: 'Projects', href: '#projects' },
   { name: 'Education', href: '#education' },
   { name: 'Certifications', href: '#certifications' },
@@ -20,7 +20,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [profileDropdownOpen, setProfileDropdownOpen] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
+  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
+  const [loginError, setLoginError] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
   const profileRef = useRef(null);
+  const { user, login, logout, isAuthenticated } = useAuth();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -47,6 +52,31 @@ export default function Navbar() {
     const element = document.querySelector(id);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    setLoginError('');
+    setIsLoggingIn(true);
+
+    const result = await login(loginForm.email, loginForm.password);
+    
+    if (result.success) {
+      setShowLoginModal(false);
+      setLoginForm({ email: '', password: '' });
+      setProfileDropdownOpen(false);
+    } else {
+      setLoginError(result.error || 'Login failed. Please try again.');
+    }
+    
+    setIsLoggingIn(false);
+  };
+
+  const handleLogout = async () => {
+    const result = await logout();
+    if (result.success) {
+      setProfileDropdownOpen(false);
     }
   };
 
@@ -94,16 +124,16 @@ export default function Navbar() {
         {/* Profile Dropdown / Top Right Badge */}
         <div className="hidden md:flex items-center" ref={profileRef}>
           <button
-            className="flex items-center gap-2 px-4 py-2 rounded-full border border-slate-200 bg-[#FEF8EC]/50 shadow-sm cursor-pointer hover:bg-slate-50 transition-colors focus:outline-none focus:ring-2 focus:ring-[#F97316] focus:ring-offset-2"
+            className="flex items-center gap-2 px-4 py-2 rounded-full border border-[#E8E4DC] bg-[#FAF7F0]/50 shadow-sm cursor-pointer hover:bg-[#FAF7F0] transition-colors focus:outline-none focus:ring-2 focus:ring-[#F97316] focus:ring-offset-2"
             onClick={() => setProfileDropdownOpen(!profileDropdownOpen)}
             aria-label="Profile menu"
             aria-expanded={profileDropdownOpen}
             aria-haspopup="true"
           >
             <div className="w-7 h-7 rounded-full bg-[#F97316] text-white flex items-center justify-center text-xs font-bold">
-              A
+              {isAuthenticated ? (user?.email?.[0]?.toUpperCase() || 'U') : 'A'}
             </div>
-            <span className="text-sm font-medium text-slate-700">Ananya</span>
+            <span className="text-sm font-medium text-slate-700">{isAuthenticated ? (user?.name || 'User') : 'Ananya'}</span>
             <ChevronDown size={16} className={`text-slate-400 transition-transform ${profileDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
 
@@ -115,7 +145,7 @@ export default function Navbar() {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -10, scale: 0.95 }}
                 transition={{ duration: 0.2 }}
-                className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-slate-200 overflow-hidden z-50"
+                className="absolute top-full right-0 mt-2 w-72 bg-white rounded-2xl shadow-xl border border-[#E8E4DC] overflow-hidden z-50"
               >
                 {/* Profile Header */}
                 <div className="bg-gradient-to-r from-[#F97316] to-[#F59E0B] p-4 text-white">
@@ -132,52 +162,129 @@ export default function Navbar() {
 
                 {/* Profile Content */}
                 <div className="p-4 space-y-3">
-                  <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Quick Actions</div>
-                  
-                  <a
-                    href="#contact"
-                    onClick={(e) => scrollTo(e, '#contact')}
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FEF8EC] transition-colors text-slate-700 hover:text-[#F97316]"
-                  >
-                    <Mail size={18} className="text-[#F97316]" />
-                    <span className="text-sm font-medium">Contact Me</span>
-                  </a>
-
-                  <a
-                    href={portfolioData.personal.linkedin}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FEF8EC] transition-colors text-slate-700 hover:text-[#F97316]"
-                  >
-                    <FiLinkedin size={18} className="text-[#F97316]" />
-                    <span className="text-sm font-medium">LinkedIn Profile</span>
-                  </a>
-
-                  <div className="border-t border-slate-200 pt-3 mt-3">
-                    <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Information</div>
-                    
-                    <div className="space-y-2 text-sm text-slate-600">
-                      <div className="flex items-start gap-2">
-                        <User size={16} className="text-slate-400 mt-0.5" />
-                        <div>
-                          <p className="font-medium text-slate-700">Education</p>
-                          <p className="text-xs">MCA (Pursuing) • B.Sc. Computer Science</p>
+                  {isAuthenticated ? (
+                    <>
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">My Profile</div>
+                      
+                      <div className="bg-[#FAF7F0] rounded-lg p-3 mb-3">
+                        <div className="flex items-center gap-3 mb-2">
+                          <div className="w-10 h-10 rounded-full bg-[#F97316] text-white flex items-center justify-center font-bold">
+                            {user?.email?.[0]?.toUpperCase() || 'A'}
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-800">{user?.email || 'User'}</p>
+                            <p className="text-xs text-slate-500">Logged in</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  </div>
 
-                  <div className="border-t border-slate-200 pt-3 mt-3">
-                    <button
-                      className="flex items-center gap-3 p-2 rounded-lg hover:bg-red-50 transition-colors text-slate-700 hover:text-red-600 w-full text-left"
-                      disabled
-                      title="Authentication not implemented"
-                    >
-                      <LogOut size={18} />
-                      <span className="text-sm font-medium">Logout</span>
-                    </button>
-                    <p className="text-xs text-slate-400 mt-1 text-center">Login required for logout</p>
-                  </div>
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Quick Actions</div>
+                      
+                      <a
+                        href="#contact"
+                        onClick={(e) => scrollTo(e, '#contact')}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors text-slate-700 hover:text-[#F97316]"
+                      >
+                        <Mail size={18} className="text-[#F97316]" />
+                        <span className="text-sm font-medium">Contact Me</span>
+                      </a>
+
+                      <a
+                        href={portfolioData.personal.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors text-slate-700 hover:text-[#F97316]"
+                      >
+                        <FiLinkedin size={18} className="text-[#F97316]" />
+                        <span className="text-sm font-medium">LinkedIn Profile</span>
+                      </a>
+
+                      <div className="border-t border-[#E8E4DC] pt-3 mt-3">
+                        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Information</div>
+                        
+                        <div className="space-y-2 text-sm text-slate-600">
+                          <div className="flex items-start gap-2">
+                            <User size={16} className="text-slate-400 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-slate-700">Education</p>
+                              <p className="text-xs">MCA (Pursuing) • B.Sc. Computer Science</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-[#E8E4DC] pt-3 mt-3">
+                        <button
+                          onClick={handleLogout}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-red-50 transition-colors text-slate-700 hover:text-red-600 w-full text-left"
+                        >
+                          <LogOut size={18} />
+                          <span className="text-sm font-medium">Logout</span>
+                        </button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">My Profile</div>
+                      
+                      <div className="bg-[#FAF7F0] rounded-lg p-3 mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-10 h-10 rounded-full bg-[#F97316] text-white flex items-center justify-center font-bold">
+                            A
+                          </div>
+                          <div>
+                            <p className="text-sm font-medium text-slate-800">{portfolioData.personal.name}</p>
+                            <p className="text-xs text-slate-500">Not logged in</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Quick Actions</div>
+                      
+                      <a
+                        href="#contact"
+                        onClick={(e) => scrollTo(e, '#contact')}
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors text-slate-700 hover:text-[#F97316]"
+                      >
+                        <Mail size={18} className="text-[#F97316]" />
+                        <span className="text-sm font-medium">Contact Me</span>
+                      </a>
+
+                      <a
+                        href={portfolioData.personal.linkedin}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors text-slate-700 hover:text-[#F97316]"
+                      >
+                        <FiLinkedin size={18} className="text-[#F97316]" />
+                        <span className="text-sm font-medium">LinkedIn Profile</span>
+                      </a>
+
+                      <div className="border-t border-[#E8E4DC] pt-3 mt-3">
+                        <div className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Information</div>
+                        
+                        <div className="space-y-2 text-sm text-slate-600">
+                          <div className="flex items-start gap-2">
+                            <User size={16} className="text-slate-400 mt-0.5" />
+                            <div>
+                              <p className="font-medium text-slate-700">Education</p>
+                              <p className="text-xs">MCA (Pursuing) • B.Sc. Computer Science</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-[#E8E4DC] pt-3 mt-3">
+                        <button
+                          onClick={() => setShowLoginModal(true)}
+                          className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAF7F0] transition-colors text-slate-700 hover:text-[#F97316] w-full text-left"
+                        >
+                          <LogIn size={18} />
+                          <span className="text-sm font-medium">Login / Sign In</span>
+                        </button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </motion.div>
             )}
@@ -203,7 +310,7 @@ export default function Navbar() {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-[#FEF8EC]/95 backdrop-blur-md border-b border-slate-200 overflow-hidden"
+            className="md:hidden bg-[#FAF7F0]/95 backdrop-blur-md border-b border-[#E8E4DC] overflow-hidden"
           >
             <div className="px-4 py-6 flex flex-col space-y-4">
               {navLinks.map((link) => (
@@ -211,7 +318,7 @@ export default function Navbar() {
                   key={link.name}
                   href={link.href}
                   onClick={(e) => scrollTo(e, link.href)}
-                  className="text-slate-600 font-medium text-lg border-b border-slate-100 pb-2"
+                  className="text-slate-600 font-medium text-lg border-b border-[#E8E4DC] pb-2"
                 >
                   {link.name}
                 </a>
@@ -225,7 +332,7 @@ export default function Navbar() {
               </a>
               
               {/* Mobile Profile Section */}
-              <div className="pt-4 border-t border-slate-200">
+              <div className="pt-4 border-t border-[#E8E4DC]">
                 <div className="flex items-center gap-3 p-3 bg-white rounded-xl">
                   <div className="w-10 h-10 rounded-full bg-[#F97316] text-white flex items-center justify-center font-bold">
                     A
@@ -248,6 +355,87 @@ export default function Navbar() {
                 </div>
               </div>
             </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Login Modal */}
+      <AnimatePresence>
+        {showLoginModal && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            onClick={() => setShowLoginModal(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={(e) => e.stopPropagation()}
+              className="bg-white rounded-2xl p-8 w-full max-w-md shadow-2xl"
+            >
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-2xl font-bold text-[#171717]">Login</h3>
+                <button
+                  onClick={() => setShowLoginModal(false)}
+                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                >
+                  <X size={24} />
+                </button>
+              </div>
+
+              <form onSubmit={handleLogin} className="space-y-4">
+                {loginError && (
+                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                    {loginError}
+                  </div>
+                )}
+
+                <div>
+                  <label htmlFor="login-email" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Email
+                  </label>
+                  <input
+                    id="login-email"
+                    type="email"
+                    value={loginForm.email}
+                    onChange={(e) => setLoginForm({ ...loginForm, email: e.target.value })}
+                    placeholder="your@email.com"
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="login-password" className="block text-sm font-semibold text-slate-700 mb-2">
+                    Password
+                  </label>
+                  <input
+                    id="login-password"
+                    type="password"
+                    value={loginForm.password}
+                    onChange={(e) => setLoginForm({ ...loginForm, password: e.target.value })}
+                    placeholder="••••••••"
+                    required
+                    className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isLoggingIn}
+                  className="w-full py-3 rounded-xl bg-gradient-btn text-white font-medium hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isLoggingIn ? 'Logging in...' : 'Login'}
+                </button>
+              </form>
+
+              <p className="text-center text-sm text-slate-500 mt-4">
+                Demo: Enter any email and password (min 6 characters) to test login.
+              </p>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

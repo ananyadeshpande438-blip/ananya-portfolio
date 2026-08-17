@@ -4,9 +4,9 @@ import { Briefcase, Calendar, MapPin, CheckCircle2 } from 'lucide-react';
 
 export default function Experience() {
   return (
-    <SectionWrapper id="experience" title="Experience" subtitle="MY PROFESSIONAL JOURNEY" className="bg-slate-50/50">
+    <SectionWrapper id="experience" title="Experience" subtitle="MY PROFESSIONAL JOURNEY" className="bg-white/40">
       <div className="max-w-4xl mx-auto">
-        <div className="relative border-l-4 border-[#FFEDD5] ml-6 md:ml-8 pb-8">
+        <div className="relative border-l-4 border-[#FED7AA] ml-6 md:ml-8 pb-8">
           
           {portfolioData.internships.map((job, idx) => (
             <div key={idx} className="mb-12 relative pl-8 md:pl-12">
@@ -26,7 +26,7 @@ export default function Experience() {
                     </div>
                   </div>
                   
-                  <div className="flex flex-col gap-2 shrink-0 text-sm font-medium text-slate-500 bg-slate-100 px-4 py-2 rounded-xl">
+                  <div className="flex flex-col gap-2 shrink-0 text-sm font-medium text-slate-500 bg-[#FAF7F0] px-4 py-2 rounded-xl">
                     <div className="flex items-center gap-2">
                       <Calendar size={16} className="text-[#F97316]" />
                       {job.duration}
@@ -47,11 +47,11 @@ export default function Experience() {
                   ))}
                 </div>
 
-                <div className="mt-6 pt-6 border-t border-slate-200/60">
+                <div className="mt-6 pt-6 border-t border-[#E8E4DC]/60">
                   <span className="text-sm font-bold text-slate-500 mr-3">Tools:</span>
                   <div className="inline-flex flex-wrap gap-2">
                     {job.tools.map(tool => (
-                      <span key={tool} className="px-3 py-1 bg-[#FEF8EC] border border-slate-200 text-slate-600 rounded-md text-sm font-medium">
+                      <span key={tool} className="px-3 py-1 bg-[#FAF7F0] border border-[#E8E4DC] text-slate-600 rounded-md text-sm font-medium">
                         {tool}
                       </span>
                     ))}

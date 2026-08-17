@@ -18,7 +18,7 @@ const Button = React.forwardRef(({
     primary: "bg-gradient-to-r from-brand-500 to-[#F59E0B] text-white hover:shadow-lg hover:shadow-brand-500/30 focus:ring-brand-500",
     secondary: "bg-surface text-white hover:bg-surface-hover border border-white/10 focus:ring-slate-400",
     outline: "border-2 border-brand-500 text-brand-500 hover:bg-brand-500/10 focus:ring-brand-500",
-    ghost: "text-slate-300 hover:text-white hover:bg-[#FEF8EC]/5 focus:ring-slate-400",
+    ghost: "text-[#737373] hover:text-[#171717] hover:bg-[#FAF7F0]/50 focus:ring-[#737373]",
   };
   
   const sizes = {

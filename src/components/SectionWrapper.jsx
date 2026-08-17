@@ -18,7 +18,7 @@ export default function SectionWrapper({ id, title, subtitle, children, classNam
                 {subtitle}
               </span>
             )}
-            <h2 className="text-3xl md:text-5xl font-black text-slate-900 relative inline-block">
+            <h2 className="text-3xl md:text-5xl font-black text-[#171717] relative inline-block">
               {title}
               <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 w-20 h-1.5 bg-gradient-to-r from-[#F97316] to-[#F59E0B] rounded-full"></div>
             </h2>

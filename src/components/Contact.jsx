@@ -51,23 +51,42 @@ export default function Contact() {
     setIsSubmitting(true);
 
     try {
-      // EmailJS configuration - replace with your actual service ID, template ID, and public key
-      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID || 'YOUR_SERVICE_ID';
-      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID || 'YOUR_TEMPLATE_ID';
-      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY || 'YOUR_PUBLIC_KEY';
+      // EmailJS configuration
+      const serviceId = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+      const templateId = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+      const publicKey = import.meta.env.VITE_EMAILJS_PUBLIC_KEY;
 
-      await emailjs.send(
+      console.log('EmailJS Configuration Check:');
+      console.log('Service ID:', serviceId);
+      console.log('Template ID:', templateId);
+      console.log('Public Key:', publicKey ? publicKey.substring(0, 10) + '...' : 'missing');
+
+      if (!serviceId || serviceId === 'your_service_id_here' || 
+          !templateId || templateId === 'your_template_id_here' ||
+          !publicKey || publicKey === 'your_public_key_here') {
+        throw new Error('EmailJS credentials not configured. Please check .env file.');
+      }
+
+      console.log('Sending email with data:', {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message
+      });
+
+      const response = await emailjs.send(
         serviceId,
         templateId,
         {
-          from_name: formData.name,
-          from_email: formData.email,
+          name: formData.name,
+          email: formData.email,
           subject: formData.subject,
           message: formData.message,
-          to_name: 'Ananya Deshpande',
         },
         publicKey
       );
+
+      console.log('EmailJS Response:', response);
 
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -76,8 +95,19 @@ export default function Contact() {
       setTimeout(() => setIsSubmitted(false), 5000);
     } catch (err) {
       setIsSubmitting(false);
-      setError('Failed to send message. Please try again or contact me directly via email.');
-      console.error('EmailJS Error:', err);
+      console.error('EmailJS Error Details:', err);
+      console.error('Error text:', err.text);
+      console.error('Error status:', err.status);
+      
+      if (err.text && err.text.includes('Private key')) {
+        setError('Configuration error: Private key detected. Please use Public Key only.');
+      } else if (err.text && err.text.includes('service_id')) {
+        setError('Configuration error: Invalid Service ID. Please check your EmailJS Service ID.');
+      } else if (err.text && err.text.includes('template_id')) {
+        setError('Configuration error: Invalid Template ID. Please check your EmailJS Template ID.');
+      } else {
+        setError(`Failed to send message: ${err.text || err.message || 'Unknown error'}. Please try again or contact me directly via email.`);
+      }
     }
   };
 
@@ -90,7 +120,7 @@ export default function Contact() {
   };
 
   return (
-    <SectionWrapper id="contact" title="Get In Touch" subtitle="CONTACT ME" className="bg-slate-50/50">
+    <SectionWrapper id="contact" title="Get In Touch" subtitle="CONTACT ME" className="bg-white/40">
       <div className="grid grid-cols-1 lg:grid-cols-5 gap-12">
         
         {/* Contact Info */}
@@ -101,8 +131,8 @@ export default function Contact() {
           </p>
 
           <div className="space-y-4">
-            <a href={`mailto:${portfolioData.personal.email}`} className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FFEDD5] transition-colors group">
-              <div className="w-12 h-12 bg-[#FEF8EC] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
+            <a href={`mailto:${portfolioData.personal.email}`} className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FED7AA] transition-colors group">
+              <div className="w-12 h-12 bg-[#FAF7F0] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
                 <Mail size={20} />
               </div>
               <div>
@@ -111,8 +141,8 @@ export default function Contact() {
               </div>
             </a>
 
-            <a href={`tel:${portfolioData.personal.phone}`} className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FFEDD5] transition-colors group">
-              <div className="w-12 h-12 bg-[#FEF8EC] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
+            <a href={`tel:${portfolioData.personal.phone}`} className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FED7AA] transition-colors group">
+              <div className="w-12 h-12 bg-[#FAF7F0] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
                 <Phone size={20} />
               </div>
               <div>
@@ -121,8 +151,8 @@ export default function Contact() {
               </div>
             </a>
 
-            <a href={portfolioData.personal.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FFEDD5] transition-colors group">
-              <div className="w-12 h-12 bg-[#FEF8EC] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
+            <a href={portfolioData.personal.linkedin} target="_blank" rel="noreferrer" className="flex items-center gap-4 p-4 glass rounded-xl hover:border-[#FED7AA] transition-colors group">
+              <div className="w-12 h-12 bg-[#FAF7F0] rounded-lg flex items-center justify-center text-[#F97316] group-hover:bg-[#F97316] group-hover:text-white transition-colors">
                 <FiLinkedin size={20} />
               </div>
               <div>
@@ -132,7 +162,7 @@ export default function Contact() {
             </a>
 
             <div className="flex items-center gap-4 p-4 glass rounded-xl">
-              <div className="w-12 h-12 bg-[#FEF8EC] rounded-lg flex items-center justify-center text-[#F97316]">
+              <div className="w-12 h-12 bg-[#FAF7F0] rounded-lg flex items-center justify-center text-[#F97316]">
                 <MapPin size={20} />
               </div>
               <div>
@@ -173,7 +203,7 @@ export default function Contact() {
                   required
                   aria-required="true"
                   aria-invalid={error ? 'true' : 'false'}
-                  className="w-full px-4 py-3 rounded-xl bg-[#FEF8EC] border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
                 />
               </div>
               <div>
@@ -188,7 +218,7 @@ export default function Contact() {
                   required
                   aria-required="true"
                   aria-invalid={error ? 'true' : 'false'}
-                  className="w-full px-4 py-3 rounded-xl bg-[#FEF8EC] border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
+                  className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
                 />
               </div>
             </div>
@@ -205,7 +235,7 @@ export default function Contact() {
                 required
                 aria-required="true"
                 aria-invalid={error ? 'true' : 'false'}
-                className="w-full px-4 py-3 rounded-xl bg-[#FEF8EC] border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
+                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all"
               />
             </div>
             
@@ -221,7 +251,7 @@ export default function Contact() {
                 required
                 aria-required="true"
                 aria-invalid={error ? 'true' : 'false'}
-                className="w-full px-4 py-3 rounded-xl bg-[#FEF8EC] border border-slate-200 focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all resize-none"
+                className="w-full px-4 py-3 rounded-xl bg-[#FAF7F0] border border-[#E8E4DC] focus:outline-none focus:ring-2 focus:ring-[#F97316]/50 focus:border-[#F97316] transition-all resize-none"
               ></textarea>
             </div>
             

@@ -8,10 +8,10 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-slate-900 text-slate-300 py-12 relative border-t-4 border-[#F97316]">
+    <footer className="bg-[#171717] text-[#737373] py-12 relative border-t-4 border-[#F97316]">
       <div className="container mx-auto px-4 md:px-8 max-w-7xl">
         
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-8 border-b border-slate-800 pb-8">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 items-center mb-8 border-b border-[#262626] pb-8">
           
           {/* Brand */}
           <div className="flex flex-col items-center md:items-start gap-2">
@@ -23,20 +23,20 @@ export default function Footer() {
                 Ananya.
               </span>
             </div>
-            <p className="text-slate-400 text-sm text-center md:text-left max-w-xs mt-2">
+            <p className="text-[#737373] text-sm text-center md:text-left max-w-xs mt-2">
               Building data-driven solutions and crafting beautiful frontend experiences.
             </p>
           </div>
 
           {/* Social Links */}
           <div className="flex justify-center gap-4">
-            <a href={portfolioData.personal.linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
+            <a href={portfolioData.personal.linkedin} target="_blank" rel="noreferrer" className="w-10 h-10 rounded-full bg-[#262626] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
               <FiLinkedin size={18} />
             </a>
-            <a href={`mailto:${portfolioData.personal.email}`} className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
+            <a href={`mailto:${portfolioData.personal.email}`} className="w-10 h-10 rounded-full bg-[#262626] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
               <Mail size={18} />
             </a>
-            <a href="#" className="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
+            <a href="#" className="w-10 h-10 rounded-full bg-[#262626] flex items-center justify-center hover:bg-[#F97316] hover:text-white transition-all">
               <FiGithub size={18} />
             </a>
           </div>
@@ -45,7 +45,7 @@ export default function Footer() {
           <div className="flex justify-center md:justify-end">
             <button 
               onClick={scrollToTop}
-              className="flex items-center gap-2 text-sm font-medium hover:text-white transition-colors bg-slate-800 px-4 py-2 rounded-full"
+              className="flex items-center gap-2 text-sm font-medium hover:text-white transition-colors bg-[#262626] px-4 py-2 rounded-full"
             >
               Back to top <ArrowUp size={16} />
             </button>
@@ -53,7 +53,7 @@ export default function Footer() {
           
         </div>
 
-        <div className="text-center text-slate-500 text-sm">
+        <div className="text-center text-[#737373] text-sm">
           &copy; {new Date().getFullYear()} {portfolioData.personal.name}. All rights reserved.
         </div>
         

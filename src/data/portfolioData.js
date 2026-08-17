@@ -8,7 +8,7 @@ export const portfolioData = {
     linkedin: "https://www.linkedin.com/in/ananyadeshpande22",
     objective: "Aspiring MCA student and B.Sc. Computer Science graduate seeking opportunities in Data Analytics, Frontend Development, and Software Development. Dedicated to leveraging analytical and problem-solving skills to deliver impactful solutions and achieve professional growth in the technology industry. Passionate about React.js, Python, data visualization, and creating responsive web applications.",
     stats: [
-      { value: "3+", label: "PROJECTS" },
+      { value: "2+", label: "PROJECTS" },
       { value: "3+", label: "YEARS CODING" },
       { value: "100%", label: "CONSISTENCY" },
     ]

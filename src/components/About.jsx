@@ -51,7 +51,7 @@ export default function About() {
           </div>
           
           <div className="mt-8 flex flex-wrap gap-4">
-            <div className="flex items-center gap-2 text-slate-700 bg-slate-100 px-4 py-2 rounded-lg font-medium">
+            <div className="flex items-center gap-2 text-slate-700 bg-[#FAF7F0] px-4 py-2 rounded-lg font-medium">
               <User size={18} className="text-[#F97316]" />
               Available for Hire
             </div>
